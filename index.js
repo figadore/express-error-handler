@@ -34,8 +34,7 @@ function domainErrors(req, res, next) {
     // But don't keep the process open just for that!
     killtimer.unref();
 
-    console.log("Handling uncaught exception", err);
-    // Let the app do its own cleanup
+    // Let the app do its own logging/cleanup
     uncaughtCallback(err, req);
     appDomain.dispose();
     if (!res.headersSent) {
@@ -58,7 +57,6 @@ function handleErrors(options) {
   return errorHandler;
 }
 
-
 function getHost(req) {
   var host = req.protocol + "://" + req.get('host');
   return host;
@@ -70,10 +68,10 @@ function getHost(req) {
  */
 function errorHandler(err, req, res, next) {
   var detail;
-  console.log("Final error:", err);
   if (err.name === "NotFoundError") {
     sendError(req, res, 404, err.message);
   } else {
+    // Let the app do its own logging or whatever
     errorCallback(err, req);
     if (showDetails) {
       detail = {
@@ -96,13 +94,12 @@ function sendError(req, res, status, title, detail) {
     detail: detail
   };
   if (typeof describedBy === "function") {
-    data.describedBy = describedBy();
+    data.describedBy = describedBy(req);
   } else {
     data.describedBy = describedBy;
   }
   res.json(data);
 }
-
 
 exports.handleUncaughtErrors = handleUncaughtErrors;
 exports.sendError = sendError;

@@ -5,6 +5,8 @@ Include  the module
 
 `errorHandler = require('shiny-express-errors');`
 
+---
+
 Add middleware for error handling
 
 `app.use(errorHandler.handleErrors(options));`
@@ -16,7 +18,7 @@ Add middleware for error handling
 
 * `describedBy`: string|function(req). when string, value will be used in the `describedBy` field. when function, function will be run to generate field
 
-
+---
 
 Add middleware for uncaught errors (uses domains). Attempts to send error response if response not already sent. Then it closes any open connections before shutting down the server. Server should be shut down after an uncaught exception: it always indicates a programmer error that should be fixed immediately.
 
@@ -25,7 +27,7 @@ Add middleware for uncaught errors (uses domains). Attempts to send error respon
 ### options
 * `callback`: function(err, req). callback to run before closing
 
-
+---
 Send an error response to the client. Sends using api-problem media type.
 
 `errorHandler.sendError(req, res, status, title, detail)`

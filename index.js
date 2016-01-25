@@ -35,9 +35,10 @@ function domainErrors(req, res, next) {
     killtimer.unref();
 
     // Let the app do its own logging/cleanup
-    uncaughtCallback(err, req);
+    var responseSent = res.headersSent;
+    uncaughtCallback(err, req, responseSent);
     appDomain.dispose();
-    if (!res.headersSent) {
+    if (!responseSent) {
       // Respond with 500 error if response not already sent
       next(err);
     }
@@ -74,11 +75,17 @@ function errorHandler(err, req, res, next) {
     // Let the app do its own logging or whatever
     errorCallback(err, req);
     if (showDetails) {
-      detail = {
-        name: err.name,
-        message: err.message,
-        stack: err.stack
-      };
+      detail = {};
+      // Include original details if included
+      if (err.detail && typeof err.detail === "object") {
+        detail = err.detail;
+      } else if (err.detail && typeof err.detail === "string") {
+        detail.description = err.detail;
+      }
+      // Include error specific details
+      detail.name = err.name;
+      detail.message = err.message;
+      detail.stack = err.stack;
     }
     sendError(req, res, 500, "Unknown Error", detail);
   }

@@ -1,9 +1,14 @@
 # Express Error Handler
 
+Formats errors for the api-problem+json media-type
+
+Error details (e.g. name, message, stack) will be included if the `showDetails` option is set. If the error already has a `detail` property, that is included as well, either as `description` if it is a string, or as the included properties if it is an object.
+
 ## Usage
 Include  the module
 
 `errorHandler = require('shiny-express-errors');`
+
 
 ---
 
@@ -12,11 +17,11 @@ Add middleware for error handling
 `app.use(errorHandler.handleErrors(options));`
 
 ### options
-* `showDetails`: boolean. whether to include error details (like stack) in response
+* `showDetails`: boolean. whether to include error details (like stack) in response. Defaults to false
 
-* `errorCallback`: function(err, req). callback to run before sending error response (e.g. custom logging or whatever)
+* `errorCallback`: function(err, req, responseSent). callback to run before sending error response (e.g. custom logging or whatever). responseSent is a boolean, `true` if response headers have already been sent, i.e. next(err) will not be called, so error is not indicated is response. Defaults to doing nothing
 
-* `describedBy`: string|function(req). when string, value will be used in the `describedBy` field. when function, function will be run to generate field
+* `describedBy`: string|function(req). when string, value will be used in the `describedBy` field. when function, function will be run to generate field (with `req` as an argument). Defaults to `<host>/errors/error.html`
 
 ---
 

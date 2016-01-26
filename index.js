@@ -91,6 +91,16 @@ function errorHandler(err, req, res, next) {
   }
 }
 
+/**
+ * For VError lib, if err has `cause` function, call it recursively to get the original error
+ */
+function getRootError(err) {
+  if (err.cause && typeof err.cause === "function") {
+    return getRootError(err);
+  }
+  return err;
+}
+
 // Format error as api-problem media-type
 function sendError(req, res, status, title, detail) {
   res.status(status);
@@ -108,6 +118,28 @@ function sendError(req, res, status, title, detail) {
   res.json(data);
 }
 
+function serialize(err) {
+  var error = {};
+  if (err.name) {
+    error.name = err.name;
+  }
+  if (err.message) {
+    error.message = err.message;
+  }
+  if (err.stack) {
+    error.stack = err.stack;
+  }
+  if (err.cause && typeof err.cause === "function") {
+    error.cause = serialize(err.cause());
+  }
+  if (err.detail) {
+    error.detail = err.detail;
+  }
+  return error;
+}
+
 exports.handleUncaughtErrors = handleUncaughtErrors;
 exports.sendError = sendError;
 exports.handleErrors = handleErrors;
+
+exports.serializer = serialize;

@@ -9,7 +9,6 @@ Include  the module
 
 `errorHandler = require('shiny-express-errors');`
 
-
 ---
 
 Add middleware for error handling
@@ -36,3 +35,7 @@ Add middleware for uncaught errors (uses domains). Attempts to send error respon
 Send an error response to the client. Sends using api-problem media type.
 
 `errorHandler.sendError(req, res, status, title, detail)`
+
+## Bunyan serializer
+
+`serializer = require('shiny-express-errors').serializer;

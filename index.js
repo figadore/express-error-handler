@@ -44,6 +44,15 @@ function domainErrors(req, res, next) {
     }
   });
 
+  //make sure to leave domain at end of request
+  var oldEnd = res.end;
+  res.end = function end(chunk, encoding) {
+    // Set `end` back to its original value and call it
+    res.end = oldEnd;
+    res.end(chunk, encoding);
+    appDomain.dispose();
+  }
+
   appDomain.enter();
   next();
 }

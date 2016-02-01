@@ -78,26 +78,43 @@ function getHost(req) {
  */
 function errorHandler(err, req, res, next) {
   var detail;
-  if (err.name === "NotFoundError") {
-    sendError(req, res, 404, err.message);
-  } else {
-    // Let the app do its own logging or whatever
-    errorCallback(err, req);
-    if (showDetails) {
-      detail = {};
-      // Include original details if included
-      if (err.detail && typeof err.detail === "object") {
-        detail = err.detail;
-      } else if (err.detail && typeof err.detail === "string") {
-        detail.description = err.detail;
-      }
-      // Include error specific details
-      detail.name = err.name;
-      detail.message = err.message;
-      detail.stack = err.stack;
-    }
-    sendError(req, res, 500, "Unknown Error", detail);
+
+  // Default to 500
+  var statusCode = 500;
+  var message = "Unknown Error";
+
+  // If error has statuscode property, use that, and its message
+  if (err.hasOwnProperty('output') && err.output.hasOwnProperty('statusCode')) {
+    statusCode = err.output.statusCode;
+    message = err.message;
   }
+  if (err.hasOwnProperty('status')) {
+    statusCode = err['status'];
+    message = err.message;
+  } else if (err.hasOwnProperty('statusCode')) {
+    statusCode = err['statusCode'];
+    message = err.message;
+  } else if (err.name === "NotFoundError") {
+    statusCode = 404;
+    message = err.message;
+  }
+  // Let the app do its own logging or whatever
+  errorCallback(err, req);
+  if (showDetails) {
+    detail = {};
+    // Include original details if included
+    if (err.detail && typeof err.detail === "object") {
+      detail = err.detail;
+    } else if (err.detail && typeof err.detail === "string") {
+      detail.description = err.detail;
+    }
+    // Include error specific details
+    detail.name = err.name;
+    detail.message = err.message;
+    detail.stack = err.stack;
+  }
+
+  sendError(req, res, statusCode, message, detail);
 }
 
 /**

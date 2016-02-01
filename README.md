@@ -4,6 +4,8 @@ Formats errors for the api-problem+json media-type
 
 Error details (e.g. name, message, stack) will be included if the `showDetails` option is set. If the error already has a `detail` property, that is included as well, either as `description` if it is a string, or as the included properties if it is an object.
 
+If `err.status`, `err.statusCode` or `err.output.statusCode` is set, that will set the HTTP status for the error response. It will also display the error's `message` property.
+
 ## Usage
 Include  the module
 

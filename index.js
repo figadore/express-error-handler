@@ -51,7 +51,7 @@ function domainErrors(req, res, next) {
     res.end = oldEnd;
     res.end(chunk, encoding);
     appDomain.dispose();
-  }
+  };
 
   appDomain.enter();
   next();
@@ -89,10 +89,10 @@ function errorHandler(err, req, res, next) {
     message = err.message;
   }
   if (err.hasOwnProperty('status')) {
-    statusCode = err['status'];
+    statusCode = err.status;
     message = err.message;
   } else if (err.hasOwnProperty('statusCode')) {
-    statusCode = err['statusCode'];
+    statusCode = err.statusCode;
     message = err.message;
   } else if (err.name === "NotFoundError") {
     statusCode = 404;

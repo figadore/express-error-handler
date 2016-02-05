@@ -44,17 +44,8 @@ function domainErrors(req, res, next) {
     }
   });
 
-  //make sure to leave domain at end of request
-  var oldEnd = res.end;
-  res.end = function end(chunk, encoding) {
-    // Set `end` back to its original value and call it
-    res.end = oldEnd;
-    res.end(chunk, encoding);
-    appDomain.dispose();
-  };
-
-  appDomain.enter();
-  next();
+  // I think this attaches the domain to this request only
+  appDomain.run(next);
 }
 
 // Constructor
@@ -166,6 +157,7 @@ function serialize(err) {
 
 exports.handleUncaughtErrors = handleUncaughtErrors;
 exports.sendError = sendError;
+exports.getRootError = getRootError;
 exports.handleErrors = handleErrors;
 
 exports.serializer = serialize;

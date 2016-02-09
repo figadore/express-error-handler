@@ -21,23 +21,6 @@ function getHost(req) {
   return host;
 }
 
-function getStatusCode(err) {
-  // Default to 500
-  var statusCode = 500;
-  // If error has statuscode property, use that, and its message
-  if (err.hasOwnProperty('output') && err.output.hasOwnProperty('statusCode')) {
-    statusCode = err.output.statusCode;
-  }
-  if (err.hasOwnProperty('status')) {
-    statusCode = err.status;
-  } else if (err.hasOwnProperty('statusCode')) {
-    statusCode = err.statusCode;
-  } else if (err.name === "NotFoundError") {
-    statusCode = 404;
-  }
-  return statusCode;
-}
-
 
 // Public
 module.exports = {
@@ -78,7 +61,7 @@ module.exports = {
     // Set local variables based on options
     showDetails = options.showDetails || function showDetail(err, req) {
       // Show details for all but 500+
-      if (getStatusCode(err) >= 500) {
+      if (module.exports.getStatusCode(err) >= 500) {
         return false;
       }
       return true;
@@ -94,7 +77,7 @@ module.exports = {
       var detail;
 
       var message = "Unknown Error";
-      var statusCode = getStatusCode(err);
+      var statusCode = module.exports.getStatusCode(err);
       if (statusCode < 500) {
         message = err.message;
       }
@@ -130,6 +113,24 @@ module.exports = {
       }
       module.exports.sendError(req, res, statusCode, message, detail);
     };
+  },
+
+  // Inspect Error object to try to determine appropriate http status code
+  getStatusCode: function getStatusCode(err) {
+    // Default to 500
+    var statusCode = 500;
+    // If error has statuscode property, use that, and its message
+    if (err.hasOwnProperty('output') && err.output.hasOwnProperty('statusCode')) {
+      statusCode = err.output.statusCode;
+    }
+    if (err.hasOwnProperty('status')) {
+      statusCode = err.status;
+    } else if (err.hasOwnProperty('statusCode')) {
+      statusCode = err.statusCode;
+    } else if (err.name === "NotFoundError") {
+      statusCode = 404;
+    }
+    return statusCode;
   },
 
   // Format error as api-problem media-type

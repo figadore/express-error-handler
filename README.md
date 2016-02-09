@@ -15,6 +15,7 @@ Include  the module
 [handleUncaughtErrors]{#handleUncaughtErrors}
 [sendError]{#sendError}
 [serializer]{#serializer}
+[getStatusCode]{#getStatusCode}
 [getRootError]{#getRootError}
 
 ---
@@ -51,13 +52,22 @@ Send an error response to the client. Sends using api-problem media type.
 ---
 <a name="serializer"></a>
 Bunyan serializer. Includes recursive verror walking
-`serializer = require('shiny-express-errors').serializer;
+`serializer = require('shiny-express-errors').serializer;`
+
+
+---
+<a name="getStatusCode"></a>
+Inspect Error object to try to determine appropriate http status code
+
+
+```
+var code = serializer.statusCode(err);
+```
 
 ---
 <a name="getRootError"></a>
 Get root error. Recurses verrors to get original error object
 
 ```
-serializer.getRootError(err) {
-}
+var e = serializer.getRootError(err);
 ```

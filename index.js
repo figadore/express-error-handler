@@ -103,7 +103,7 @@ module.exports = {
         detail.message = err.message;
       }
       var includeStack;
-      if (typeof showDetails === "function") {
+      if (typeof showStack === "function") {
         includeStack = showStack(err, req);
       } else {
         includeStack = showStack;

@@ -26,7 +26,7 @@ Add middleware for error handling
 ### options
 * `showDetails`: boolean|function(err, req). whether to include error details (like stack) in response. Defaults to return true if statusCode is known and less than 500. Suggest changing it to show for all but 500+ in production
 
-* `showDetails`: boolean|function(err, req). whether to include stack trace in response. Defaults to false. Suggest changing it to show for all but production
+* `showStack`: boolean|function(err, req). whether to include stack trace in response. Defaults to false. Suggest changing it to show for all but production
 
 * `errorCallback`: function(err, req, responseSent). callback to run before sending error response (e.g. custom logging or whatever). responseSent is a boolean, `true` if response headers have already been sent, i.e. next(err) will not be called, so error is not indicated is response. Defaults to doing nothing
 

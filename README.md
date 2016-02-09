@@ -11,20 +11,29 @@ Include  the module
 
 `errorHandler = require('shiny-express-errors');`
 
----
+[handleErrors]{#handleErrors}
+[handleUncaughtErrors]{#handleUncaughtErrors}
+[sendError]{#sendError}
+[serializer]{#serializer}
+[getRootError]{#getRootError}
 
+---
+<a name="handleErrors"></a>
 Add middleware for error handling
 
 `app.use(errorHandler.handleErrors(options));`
 
 ### options
-* `showDetails`: boolean. whether to include error details (like stack) in response. Defaults to false
+* `showDetails`: boolean|function(err, req). whether to include error details (like stack) in response. Defaults to return true if statusCode is known and less than 500. Suggest changing it to show for all but 500+ in production
+
+* `showDetails`: boolean|function(err, req). whether to include stack trace in response. Defaults to false. Suggest changing it to show for all but production
 
 * `errorCallback`: function(err, req, responseSent). callback to run before sending error response (e.g. custom logging or whatever). responseSent is a boolean, `true` if response headers have already been sent, i.e. next(err) will not be called, so error is not indicated is response. Defaults to doing nothing
 
 * `describedBy`: string|function(req). when string, value will be used in the `describedBy` field. when function, function will be run to generate field (with `req` as an argument). Defaults to `<host>/errors/error.html`
 
 ---
+<a name="handleUncaughtErrors"></a>
 
 Add middleware for uncaught errors (uses domains). Attempts to send error response if response not already sent. Then it closes any open connections before shutting down the server. Server should be shut down after an uncaught exception: it always indicates a programmer error that should be fixed immediately.
 
@@ -34,10 +43,21 @@ Add middleware for uncaught errors (uses domains). Attempts to send error respon
 * `callback`: function(err, req). callback to run before closing
 
 ---
+<a name="sendError"></a>
 Send an error response to the client. Sends using api-problem media type.
 
 `errorHandler.sendError(req, res, status, title, detail)`
 
-## Bunyan serializer
-
+---
+<a name="serializer"></a>
+Bunyan serializer. Includes recursive verror walking
 `serializer = require('shiny-express-errors').serializer;
+
+---
+<a name="getRootError"></a>
+Get root error. Recurses verrors to get original error object
+
+```
+serializer.getRootError(err) {
+}
+```

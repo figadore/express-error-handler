@@ -169,7 +169,7 @@ module.exports = {
     if (err.stack) {
       error.stack = err.stack;
     }
-    if (err.cause && typeof err.cause === "function") {
+    if (err.cause && typeof err.cause === "function" && err.cause()) {
       error.cause = module.exports.serializer(err.cause());
     }
     if (err.detail) {

@@ -173,7 +173,10 @@ module.exports = {
       error.stack = err.stack;
     }
     if (err.cause && typeof err.cause === "function" && err.cause()) {
-      error.cause = module.exports.serializer(err.cause());
+      // Prevent circular reference
+      if (err !== err.cause()) {
+        error.cause = module.exports.serializer(err.cause());
+      }
     }
     if (err.detail) {
       error.detail = err.detail;

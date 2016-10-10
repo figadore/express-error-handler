@@ -111,8 +111,9 @@ module.exports = {
       if (includeStack) {
         detail.stack = err.stack;
       }
-      if (includeStack && includeDetail) {
-        detail.fullError = module.exports.serializer(err);
+      //if (includeStack && includeDetail) {
+      if (includeStack && includeDetail && err.cause && typeof err.cause === "function" && err.cause()) {
+        detail.cause = module.exports.serializer(err.cause());
       }
       module.exports.sendError(req, res, statusCode, message, detail);
     };
